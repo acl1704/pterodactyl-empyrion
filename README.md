@@ -15,3 +15,6 @@ Requires all 4 ports in the range.
 | Port  | default |
 |-------|---------|
 | Game  | 30000-30004   |
+
+#### Credits
+https://git.phenomic.net/PHENOM/Pterodactyl-Egg-Empyrion/ for the initial egg.

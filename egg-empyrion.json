@@ -3,12 +3,12 @@
     "meta": {
         "version": "PTDL_v1"
     },
-    "exported_at": "2020-12-08T18:13:43-08:00",
+    "exported_at": "2020-12-09T22:28:50-08:00",
     "name": "Empyrion",
     "author": "thephenom1811@gmail.com",
     "description": "Empyrion: Galactic Survival dedicated server in Wine.",
     "features": null,
-    "image": "quay.io\/parkervcp\/pterodactyl-images:debian_wine-5",
+    "image": "quay.io\/parkervcp\/pterodactyl-images:ubuntu_wine-source",
     "startup": ".\/EmpyrionDedicated.exe -batchmode -logFile Logs\/current.log",
     "config": {
         "files": "{}",
@@ -18,7 +18,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\r\n# Empyrion Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\napt update\r\napt -y install curl unzip lib32gcc1 ca-certificates\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\n\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\ncd \/mnt\/server\/steam\r\nchown -R root:root \/mnt\r\n\r\nexport HOME=\/mnt\/server\r\n.\/steamcmd.sh +login anonymous +@sSteamCmdForcePlatformType windows +force_install_dir \/mnt\/server +app_update 530870 +quit\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v \/mnt\/server\/steam\/linux32\/steamclient.so \/mnt\/server\/.steam\/sdk32\/steamclient.so",
+            "script": "#!\/bin\/bash\r\n# Empyrion Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\napt update\r\napt -y install curl unzip lib32gcc1 ca-certificates\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\n\r\nchown -R root:root \/mnt\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\ncd \/mnt\/server\/steam\r\n\r\nexport HOME=\/mnt\/server\r\n\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v \/mnt\/server\/steam\/linux64\/steamclient.so \/mnt\/server\/.steam\/sdk64\/steamclient.so\r\n\r\nchmod -R 777 \/mnt\r\n.\/steamcmd.sh +login anonymous +force_install_dir \/mnt\/server +app_update 530870 validate +quit",
             "container": "ubuntu:20.04",
             "entrypoint": "bash"
         }
