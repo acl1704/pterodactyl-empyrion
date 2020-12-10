@@ -1,24 +1,26 @@
-FROM ubuntu:bionic
+# ----------------------------------
+# Wine Dockerfile for Steam Servers
+# Environment: Ubuntu:18.04 + Wine
+# Minimum Panel Version: 0.7.6
+# ----------------------------------
+FROM        ubuntu:18.04
 
-ENV DEBIAN_FRONTEND=noninteractive
+LABEL       author="Kenny B" maintainer="kenny@venatus.digital"
 
-RUN dpkg --add-architecture i386 && \
-    apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:xapienz/curl34 && \
-    apt-get update && \
-    apt-get install -y net-tools tar unzip curl ca-certificates openssl git sqlite fontconfig tzdata iproute2 xz-utils gnupg2 xvfb && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && \
-    curl -s https://dl.winehq.org/wine-builds/winehq.key | apt-key add - && \
-    apt-add-repository -y 'deb https://dl.winehq.org/wine-builds/ubuntu/ bionic main' && \
-    apt-get install -y wine-staging=4.10~bionic wine-staging-i386=4.10~bionic wine-staging-amd64=4.10~bionic winetricks && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -d /home/container -m container
+# Install Dependencies
+RUN dpkg --add-architecture i386 \
+ && apt update \
+ && apt upgrade -y \
+ && apt install -y software-properties-common \
+ && apt install -y --install-recommends wine64 lib32gcc1 libntlm0 wget winbind iproute2 \
+ && useradd -d /home/container -m container
 
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
+USER        container
+ENV         HOME /home/container
+ENV         WINEARCH win64
+ENV         WINEPREFIX /home/container/.wine64
+ENV         DEBIAN_FRONTEND=noninteractive
+WORKDIR     /home/container
 
-COPY ./entrypoint.sh /entrypoint.sh
-
-CMD ["/bin/bash", "/entrypoint.sh"]
+COPY        ./entrypoint.sh /entrypoint.sh
+CMD         ["/bin/bash", "/entrypoint.sh"]
