@@ -3,13 +3,13 @@
     "meta": {
         "version": "PTDL_v1"
     },
-    "exported_at": "2020-12-10T03:12:48-08:00",
+    "exported_at": "2020-12-11T01:16:18-08:00",
     "name": "Empyrion: Galactic Survival",
     "author": "alex.chang-lam@protonmail.com",
     "description": "Empyrion: Galactic Survival dedicated server in Wine.",
     "features": null,
-    "image": "quay.io\/parkervcp\/pterodactyl-images:ubuntu_wine-source",
-    "startup": "wine64 .\/EmpyrionLauncher.exe -startDedi",
+    "image": "quay.io\/parkervcp\/pterodactyl-images:debian_wine-5",
+    "startup": "wine  .\/DedicatedServer\/EmpyrionDedicated.exe -batchmode -logFile Logs\/current.log \"$@\" &> Logs\/wine.log",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"New playfield server\",\r\n    \"userInteraction\": []\r\n}",
@@ -18,8 +18,8 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\r\n# Empyrion Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\nexport DEBIAN_FRONTEND=noninteractive\r\napt update\r\napt -y install curl unzip lib32gcc1 ca-certificates mono-complete\r\nmkdir -p \/usr\/share\/wine\/mono\r\ncd \/usr\/share\/wine\/mono\r\ncurl -sSL -o wine-mono-5.1.1-x86.tar.xz https:\/\/dl.winehq.org\/wine\/wine-mono\/5.1.1\/wine-mono-5.1.1-x86.tar.xz\r\ntar -xf wine-mono-5.1.1-x86.tar.xz\r\nwine64 msiexec \/i wine-mono-5.1.1\r\n\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\n\r\nchown -R root:root \/mnt\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzf steamcmd.tar.gz -C \/mnt\/server\/steam\r\ncd \/mnt\/server\/steam\r\n\r\nexport HOME=\/mnt\/server\r\n\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v \/mnt\/server\/steam\/linux64\/steamclient.so \/mnt\/server\/.steam\/sdk64\/steamclient.so\r\n\r\n.\/steamcmd.sh +login anonymous +force_install_dir \/mnt\/server +app_update 530870 validate +quit\r\n\r\nchmod -R 777 \/mnt",
-            "container": "ubuntu:18.04",
+            "script": "#!\/bin\/bash\r\n# Empyrion Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\napt update\r\napt -y install wget curl unzip lib32gcc1 ca-certificates xvfb\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\nmkdir -p \/home\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\n\r\nexport WINETRICKS_RUN=mono\r\nexport HOME=\/mnt\/server\r\ncd \/mnt\/server\/steam\r\nchown -R root:root \/mnt\r\n\r\n.\/steamcmd.sh +login anonymous +@sSteamCmdForcePlatformType windows +force_install_dir \/mnt\/server +app_update 530870 validate +quit\r\n\r\n## setup 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v \/mnt\/server\/steam\/linux32\/steamclient.so \/mnt\/server\/.steam\/sdk32\/steamclient.so\r\n\r\n## setup 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v \/mnt\/server\/steam\/linux64\/steamclient.so \/mnt\/server\/.steam\/sdk64\/steamclient.so",
+            "container": "debian:buster-slim",
             "entrypoint": "bash"
         }
     },
