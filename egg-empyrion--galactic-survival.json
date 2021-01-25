@@ -4,7 +4,7 @@
         "version": "PTDL_v1",
         "update_url": null
     },
-    "exported_at": "2021-01-25T01:43:35-08:00",
+    "exported_at": "2021-01-25T02:01:41-08:00",
     "name": "Empyrion: Galactic Survival",
     "author": "alex.chang-lam@protonmail.com",
     "description": "Empyrion: Galactic Survival dedicated server in Wine.",
@@ -16,9 +16,9 @@
     "startup": "wine  .\/DedicatedServer\/EmpyrionDedicated.exe -batchmode -log -logFile .\/logs\/current.log \"$@\" &> .\/logs\/wine.log | tail -f .\/logs\/current.log",
     "config": {
         "files": "{}",
-        "startup": "{\r\n    \"done\": \")! Start Game\"\r\n}",
-        "logs": "{\r\n    \"custom\": true,\r\n    \"location\": \".\/logs\/current.log\"\r\n}",
-        "stop": "^C"
+        "startup": "{\r\n    \"done\": \"-LOG- Start Game\",\r\n    \"userInteraction\": []\r\n}",
+        "logs": "{}",
+        "stop": "saveandexit 0"
     },
     "scripts": {
         "installation": {
