@@ -4,7 +4,7 @@
         "version": "PTDL_v1",
         "update_url": null
     },
-    "exported_at": "2021-01-25T02:25:17-08:00",
+    "exported_at": "2021-10-10T15:41:12+11:00",
     "name": "Empyrion: Galactic Survival",
     "author": "alex.chang-lam@protonmail.com",
     "description": "Empyrion: Galactic Survival dedicated server in Wine.",
@@ -12,17 +12,17 @@
     "images": [
         "quay.io\/parkervcp\/pterodactyl-images:debian_wine-5"
     ],
-    "file_denylist": "",
-    "startup": "wine  .\/DedicatedServer\/EmpyrionDedicated.exe -batchmode -log -logFile .\/logs\/current.log \"$@\" &> .\/logs\/wine.log | tail -f .\/logs\/current.log",
+    "file_denylist": [],
+    "startup": "cd empyrion; WINEDLLOVERRIDES=\"mscoree,mshtml=\" wine  .\/DedicatedServer\/EmpyrionDedicated.exe -batchmode -log -logFile .\/logs\/current.log \"$@\" &> .\/logs\/wine.log | tail -f .\/logs\/current.log",
     "config": {
-        "files": "{}",
+        "files": "{\r\n    \"empyrion\/dedicated.yaml\": {\r\n        \"parser\": \"yaml\",\r\n        \"find\": {\r\n            \"ServerConfig.Srv_Port\": \"{{server.build.default.port}}\",\r\n            \"ServerConfig.Srv_Name\": \"{{env.SRV_NAME}}\",\r\n            \"ServerConfig.Srv_Password\": \"{{env.SRV_PWD}}\",\r\n            \"ServerConfig.Srv_MaxPlayers\": \"{{env.MAX_PLAYERS}}\",\r\n            \"ServerConfig.Tel_Enabled\": \"{{env.TELNET_ENABLED}}\",\r\n            \"ServerConfig.Tel_Port\": \"{{env.TELNET_PORT}}\",\r\n            \"ServerConfig.Tel_Pwd\": \"{{env.TELNET_PWD}}\",\r\n            \"ServerConfig.Srv_Description\": \"{{env.SRV_DESC}}\",\r\n            \"GameConfig.Seed\": \"{{env.SEED}}\"\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \"-LOG- Start Game\",\r\n    \"userInteraction\": []\r\n}",
         "logs": "{}",
         "stop": "saveandexit 0"
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\r\n# Empyrion Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\napt update\r\napt -y install curl unzip lib32gcc1 ca-certificates xvfb\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\n\r\nexport WINETRICKS_RUN=mono\r\nexport HOME=\/mnt\/server\r\nexport AUTO_UPDATE=1\r\nexport SRCDS_APPID=530870\r\n\r\ncd \/mnt\/server\/steam\r\nchown -R root:root \/mnt\r\n\r\nif [ \"${VERSION}\" == \"experimental\" ]; then\r\n    .\/steamcmd.sh +login anonymous +force_install_dir \/mnt\/server +app_update 530870 -beta experimental validate +quit\r\nelse\r\n    .\/steamcmd.sh +login anonymous +force_install_dir \/mnt\/server +app_update 530870 validate +quit\r\nfi\r\n\r\n## setup 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v \/mnt\/server\/steam\/linux32\/steamclient.so \/mnt\/server\/.steam\/sdk32\/steamclient.so\r\n\r\n## setup 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v \/mnt\/server\/steam\/linux64\/steamclient.so \/mnt\/server\/.steam\/sdk64\/steamclient.so",
+            "script": "#!\/bin\/bash\r\n# Empyrion Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\napt update\r\napt -y install curl unzip lib32gcc1 ca-certificates xvfb\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\n\r\nexport WINETRICKS_RUN=mono\r\nexport WINEDLLOVERRIDES=\"mscoree,mshtml=\"\r\nexport HOME=\/mnt\/server\r\nexport AUTO_UPDATE=1\r\nexport SRCDS_APPID=530870\r\n\r\nmkdir -p \/mnt\/server\/empyrion\r\nmkdir -p \/mnt\/server\/Logs\r\nmkdir -p \/mnt\/server\/empyrion\/logs\r\ntouch \/mnt\/server\/empyrion\/logs\/current.log\r\n\r\ncd \/mnt\/server\/steam\r\nchown -R root:root \/mnt\r\n\r\nif [ \"${VERSION}\" == \"experimental\" ]; then\r\n    .\/steamcmd.sh +login anonymous +@sSteamCmdForcePlatformType windows +force_install_dir \/mnt\/server\/empyrion +app_update 530870 -beta experimental validate +quit\r\nelse\r\n    .\/steamcmd.sh +login anonymous +@sSteamCmdForcePlatformType windows +force_install_dir \/mnt\/server\/empyrion +app_update 530870 validate +quit\r\nfi\r\n\r\n## setup 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v \/mnt\/server\/steam\/linux32\/steamclient.so \/mnt\/server\/.steam\/sdk32\/steamclient.so\r\n\r\n## setup 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v \/mnt\/server\/steam\/linux64\/steamclient.so \/mnt\/server\/.steam\/sdk64\/steamclient.so",
             "container": "debian:buster-slim",
             "entrypoint": "bash"
         }
@@ -36,6 +36,78 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:20"
+        },
+        {
+            "name": "Server Name",
+            "description": "Name that will be shown in the Server Browser.",
+            "env_variable": "SRV_NAME",
+            "default_value": "My Server",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:20"
+        },
+        {
+            "name": "Server Password",
+            "description": "Password used to connect to the server - Optional, defaults to no password.",
+            "env_variable": "SRV_PWD",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:20"
+        },
+        {
+            "name": "Max Players",
+            "description": "Maximum number of player allowed to join simultaneously in the server. Defaults to 20.",
+            "env_variable": "MAX_PLAYERS",
+            "default_value": "20",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|numeric"
+        },
+        {
+            "name": "Enable Telnet",
+            "description": "Telnet access to control the server.",
+            "env_variable": "TELNET_ENABLED",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|regex:\/^(?:true)?(?:false)?\\b\/"
+        },
+        {
+            "name": "Telnet Port",
+            "description": "Telnet Server Port DO NOT EXPOSE THIS TO THE INTERNET.",
+            "env_variable": "TELNET_PORT",
+            "default_value": "30004",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|numeric"
+        },
+        {
+            "name": "Telnet Password",
+            "description": "Telnet server password.",
+            "env_variable": "TELNET_PWD",
+            "default_value": "Abc",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:20"
+        },
+        {
+            "name": "Game Seed",
+            "description": "World generation seed. Numeric between 1 and 7 characters.",
+            "env_variable": "SEED",
+            "default_value": "1011345",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|numeric|between:1,7"
+        },
+        {
+            "name": "Server Description",
+            "description": "Server info between the \" \", can contain [b]bold[\/b] text or a [u][url=empyriongame.com]link[\/url][\/u] up to 127 chars.",
+            "env_variable": "SRV_DESC",
+            "default_value": "Empryion Galactic Survival Dedicated Server running on Pterodactyl Panel",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:127"
         }
     ]
 }
