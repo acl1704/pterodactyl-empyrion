@@ -20,7 +20,7 @@ Do not expose the telnet port to the internet.
 
 | Port  | default |
 |-------|---------|
-| Game  | 30000-30004   |
+| Game  | 30000-30003   |
 | Telnet |  30004  | 
 
 #### Credits
