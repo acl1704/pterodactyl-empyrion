@@ -21,9 +21,9 @@ Do not expose the telnet port to the internet.
 | Port  | default |
 |-------|---------|
 | Game  | 30000-30004   |
-|-------|---------|
 | Telnet |  30004  | 
 
 #### Credits
 https://git.phenomic.net/PHENOM/Pterodactyl-Egg-Empyrion/ for the initial egg.
+
 https://github.com/acl1704/pterodactyl-empyrion for modifying egg to use standard pterodactyl images
