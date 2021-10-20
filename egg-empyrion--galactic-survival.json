@@ -98,7 +98,7 @@
             "default_value": "1011345",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "required|numeric|between:1,7"
+            "rules": "required|numeric|min:1"
         },
         {
             "name": "Server Description",
