@@ -10,7 +10,7 @@
     "description": "Empyrion: Galactic Survival dedicated server in Wine.",
     "features": null,
     "images": [
-        "quay.io\/parkervcp\/pterodactyl-images:debian_wine-5"
+        "ghcr.io/parkervcp/yolks:wine_latest"
     ],
     "file_denylist": [],
     "startup": "cd empyrion; WINEDLLOVERRIDES=\"mscoree,mshtml=\" wine  .\/DedicatedServer\/EmpyrionDedicated.exe -batchmode -log -logFile .\/logs\/current.log \"$@\" &> .\/logs\/wine.log | tail -f .\/logs\/current.log",
@@ -22,8 +22,8 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\r\n# Empyrion Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\napt update\r\napt -y install curl unzip lib32gcc1 ca-certificates xvfb\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\n\r\nexport WINETRICKS_RUN=mono\r\nexport WINEDLLOVERRIDES=\"mscoree,mshtml=\"\r\nexport HOME=\/mnt\/server\r\nexport AUTO_UPDATE=1\r\nexport SRCDS_APPID=530870\r\n\r\nmkdir -p \/mnt\/server\/empyrion\r\nmkdir -p \/mnt\/server\/Logs\r\nmkdir -p \/mnt\/server\/empyrion\/logs\r\ntouch \/mnt\/server\/empyrion\/logs\/current.log\r\n\r\ncd \/mnt\/server\/steam\r\nchown -R root:root \/mnt\r\n\r\nif [ \"${VERSION}\" == \"experimental\" ]; then\r\n    .\/steamcmd.sh +login anonymous +@sSteamCmdForcePlatformType windows +force_install_dir \/mnt\/server\/empyrion +app_update 530870 -beta experimental validate +quit\r\nelse\r\n    .\/steamcmd.sh +login anonymous +@sSteamCmdForcePlatformType windows +force_install_dir \/mnt\/server\/empyrion +app_update 530870 validate +quit\r\nfi\r\n\r\n## setup 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v \/mnt\/server\/steam\/linux32\/steamclient.so \/mnt\/server\/.steam\/sdk32\/steamclient.so\r\n\r\n## setup 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v \/mnt\/server\/steam\/linux64\/steamclient.so \/mnt\/server\/.steam\/sdk64\/steamclient.so",
-            "container": "debian:buster-slim",
+            "script": "#!\/bin\/bash\r\n# Empyrion Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\napt update\r\napt -y install curl unzip lib32gcc-s1 ca-certificates xvfb\r\ncd \/tmp\r\ncurl -sSL -o steamcmd.tar.gz https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz\r\nmkdir -p \/mnt\/server\/steam\r\ntar -xzvf steamcmd.tar.gz -C \/mnt\/server\/steam\r\n\r\nexport WINETRICKS_RUN=mono\r\nexport WINEDLLOVERRIDES=\"mscoree,mshtml=\"\r\nexport HOME=\/mnt\/server\r\nexport AUTO_UPDATE=1\r\nexport SRCDS_APPID=530870\r\n\r\nmkdir -p \/mnt\/server\/empyrion\r\nmkdir -p \/mnt\/server\/Logs\r\nmkdir -p \/mnt\/server\/empyrion\/logs\r\ntouch \/mnt\/server\/empyrion\/logs\/current.log\r\n\r\ncd \/mnt\/server\/steam\r\nchown -R root:root \/mnt\r\n\r\nif [ \"${VERSION}\" == \"experimental\" ]; then\r\n    .\/steamcmd.sh +login anonymous +@sSteamCmdForcePlatformType windows +force_install_dir \/mnt\/server\/empyrion +app_update 530870 -beta experimental validate +quit\r\nelse\r\n    .\/steamcmd.sh +login anonymous +@sSteamCmdForcePlatformType windows +force_install_dir \/mnt\/server\/empyrion +app_update 530870 validate +quit\r\nfi\r\n\r\n## setup 32 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk32\r\ncp -v \/mnt\/server\/steam\/linux32\/steamclient.so \/mnt\/server\/.steam\/sdk32\/steamclient.so\r\n\r\n## setup 64 bit libraries\r\nmkdir -p \/mnt\/server\/.steam\/sdk64\r\ncp -v \/mnt\/server\/steam\/linux64\/steamclient.so \/mnt\/server\/.steam\/sdk64\/steamclient.so",
+            "container": "ghcr.io/parkervcp/installers:debian",
             "entrypoint": "bash"
         }
     },
